@@ -1,7 +1,11 @@
 package global
 
-import "survey_backend/config"
+import (
+	"gorm.io/gorm"
+	"survey_backend/config"
+)
 
 var (
 	Config *config.Config
+	Db     *gorm.DB
 )
