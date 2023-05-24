@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"survey_backend/core"
+)
 
 func main() {
-	fmt.Println(123)
+	// 读取配置文件
+	core.InitConf()
 }
