@@ -9,6 +9,9 @@ import (
 func main() {
 	// 读取配置文件
 	core.InitConf()
+	// 初始化日志
+	global.Log = core.InitLogger()
+	global.Log.Error("asd")
 	// 初始化mysql连接
 	global.Db = core.InitGorm()
 	fmt.Println(global.Db)
