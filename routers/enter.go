@@ -5,11 +5,13 @@ import (
 	"survey_backend/global"
 )
 
+type RouterGroup struct {
+	*gin.Engine
+}
+
 func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.String(200, "测试")
-	})
+	RouterGroup{router}.SettingsRouter()
 	return router
 }
