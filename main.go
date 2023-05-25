@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"survey_backend/core"
 	"survey_backend/global"
+	"survey_backend/routers"
 )
 
 func main() {
@@ -11,8 +11,14 @@ func main() {
 	core.InitConf()
 	// 初始化日志
 	global.Log = core.InitLogger()
-	global.Log.Error("asd")
 	// 初始化mysql连接
 	global.Db = core.InitGorm()
-	fmt.Println(global.Db)
+	// 初始化路由
+	router := routers.InitRouter()
+	addr := global.Config.System.Addr()
+	global.Log.Infof("程序运行在：%s", addr)
+	err := router.Run(addr)
+	if err != nil {
+		global.Log.Error("服务启动失败：", err)
+	}
 }

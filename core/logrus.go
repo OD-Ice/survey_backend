@@ -66,6 +66,7 @@ func InitLogger() *logrus.Logger {
 	}
 	mLog.SetLevel(level) // 设置最低的Level
 	InitDefaultLogger()
+	mLog.Info("日志初始化成功")
 	return mLog
 }
 
