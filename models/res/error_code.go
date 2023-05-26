@@ -6,5 +6,6 @@ type ErrorCode struct {
 }
 
 var (
-	SystemError = ErrorCode{1001, "系统错误"}
+	SystemError    = ErrorCode{1001, "系统错误"}
+	ParameterError = ErrorCode{1002, "参数错误"}
 )
