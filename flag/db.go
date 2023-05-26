@@ -16,8 +16,8 @@ func Makemigrations() {
 		&models.QuestionnaireModel{},
 	)
 	if err != nil {
-		global.Log.Errorf("表结构生产失败：%s", err.Error())
+		global.Log.Errorf("表结构生成失败：%s", err.Error())
 		return
 	}
-	global.Log.Info("表结构生产成功")
+	global.Log.Info("表结构生成成功")
 }
