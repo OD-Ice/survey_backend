@@ -3,17 +3,13 @@ package questionnaire_api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"survey_backend/enum"
 	"survey_backend/global"
 	"survey_backend/models"
 	"survey_backend/models/res"
+	"survey_backend/models/serialization"
 	"time"
 )
-
-type QuestionnaireSerialization struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
 
 // CreateQuestionnaireView 创建调查问卷
 func (QuestionnaireApi) CreateQuestionnaireView(c *gin.Context) {
@@ -24,7 +20,7 @@ func (QuestionnaireApi) CreateQuestionnaireView(c *gin.Context) {
 	//	}
 	//}()
 
-	var requestBody QuestionnaireSerialization
+	var requestBody serialization.QuestionnaireSerialization
 	_currUser, _ := c.Get("currUser")
 	currUser := _currUser.(*models.UserModel)
 	err := c.ShouldBindJSON(&requestBody)
@@ -35,16 +31,17 @@ func (QuestionnaireApi) CreateQuestionnaireView(c *gin.Context) {
 	}
 
 	global.Db.Create(&models.QuestionnaireModel{
-		Title:       requestBody.Name,
+		Title:       requestBody.Title,
 		Description: requestBody.Description,
 		UserId:      currUser.Id,
+		Status:      enum.Normal,
 	})
 	res.OkWith(c)
 }
 
 // UpdateQuestionnaireView 修改调查问卷
 func (QuestionnaireApi) UpdateQuestionnaireView(c *gin.Context) {
-	var requestBody QuestionnaireSerialization
+	var requestBody serialization.QuestionnaireSerialization
 	err := c.ShouldBindJSON(&requestBody)
 	if err != nil {
 		res.FailWithCode(res.ParameterError, c)
@@ -59,7 +56,7 @@ func (QuestionnaireApi) UpdateQuestionnaireView(c *gin.Context) {
 	//	Description: requestBody.Description,
 	//})
 	result.Updates(map[string]any{
-		"title":       requestBody.Name,
+		"title":       requestBody.Title,
 		"description": requestBody.Description,
 	})
 	res.OkWith(c)
@@ -72,14 +69,27 @@ func (QuestionnaireApi) GetQuestionnaireView(c *gin.Context) {
 	currUser := _currUser.(*models.UserModel)
 	// 查询
 	var questionnaireModels []models.QuestionnaireModel
-	global.Db.Where("user_id = ?", currUser.Id).Find(&questionnaireModels)
+	global.Db.Where("user_id = ?", currUser.Id).Select("id, title, user_id, description, status").Find(&questionnaireModels)
 
-	res.OkWithData(questionnaireModels, c)
+	var data []map[string]any
+	for _, item := range questionnaireModels {
+		data = append(
+			data, map[string]any{
+				"id":          item.Id,
+				"title":       item.Title,
+				"user_id":     item.UserId,
+				"description": item.Description,
+				"status":      item.Status,
+			},
+		)
+	}
+
+	res.OkWithData(data, c)
 }
 
 // DeleteQuestionnaireView 删除调查问卷
 func (QuestionnaireApi) DeleteQuestionnaireView(c *gin.Context) {
-	var requestBody QuestionnaireSerialization
+	var requestBody serialization.QuestionnaireSerialization
 	err := c.ShouldBindJSON(&requestBody)
 	if err != nil {
 		fmt.Println(err)
@@ -87,10 +97,10 @@ func (QuestionnaireApi) DeleteQuestionnaireView(c *gin.Context) {
 		return
 	}
 	var questionnaireModel models.QuestionnaireModel
-	reuslt := global.Db.First(&questionnaireModel, requestBody.Id)
-	reuslt.Updates(map[string]any{
+	result := global.Db.First(&questionnaireModel, requestBody.Id)
+	result.Updates(map[string]any{
 		"deleted_at": time.Now(),
-		"status":     -1,
+		"status":     enum.Deleted,
 	})
 	//global.Db.Delete(&questionnaireModel, "id = ?", requestBody.Id)
 	res.OkWith(c)
