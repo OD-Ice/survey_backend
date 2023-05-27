@@ -3,12 +3,10 @@ package questionnaire_api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"survey_backend/enum"
-	"survey_backend/global"
 	"survey_backend/models"
 	"survey_backend/models/res"
 	"survey_backend/models/serialization"
-	"time"
+	"survey_backend/service"
 )
 
 // CreateQuestionnaireView 创建调查问卷
@@ -30,13 +28,9 @@ func (QuestionnaireApi) CreateQuestionnaireView(c *gin.Context) {
 		return
 	}
 
-	global.Db.Create(&models.QuestionnaireModel{
-		Title:       requestBody.Title,
-		Description: requestBody.Description,
-		UserId:      currUser.Id,
-		Status:      enum.Normal,
-	})
-	res.OkWith(c)
+	questionnaireId := service.CreateQuestionnaireService(requestBody.Title, requestBody.Description, currUser.Id)
+	data := map[string]any{"questionnaireId": questionnaireId}
+	res.OkWithData(data, c)
 }
 
 // UpdateQuestionnaireView 修改调查问卷
@@ -47,18 +41,9 @@ func (QuestionnaireApi) UpdateQuestionnaireView(c *gin.Context) {
 		res.FailWithCode(res.ParameterError, c)
 		return
 	}
-	var questionnaireModel models.QuestionnaireModel
-	// 获取要更新的那条数据
-	result := global.Db.First(&questionnaireModel, requestBody.Id)
 
-	//result.Updates(&models.QuestionnaireModel{
-	//	Title:       requestBody.Name,
-	//	Description: requestBody.Description,
-	//})
-	result.Updates(map[string]any{
-		"title":       requestBody.Title,
-		"description": requestBody.Description,
-	})
+	service.UpdateQuestionnaireService(requestBody.Id, requestBody.Title, requestBody.Description)
+
 	res.OkWith(c)
 }
 
@@ -68,8 +53,7 @@ func (QuestionnaireApi) GetQuestionnaireView(c *gin.Context) {
 	_currUser, _ := c.Get("currUser")
 	currUser := _currUser.(*models.UserModel)
 	// 查询
-	var questionnaireModels []models.QuestionnaireModel
-	global.Db.Where("user_id = ?", currUser.Id).Select("id, title, user_id, description, status").Find(&questionnaireModels)
+	questionnaireModels := service.GetQuestionnaireByUserIdService(currUser.Id)
 
 	var data []map[string]any
 	for _, item := range questionnaireModels {
@@ -96,12 +80,7 @@ func (QuestionnaireApi) DeleteQuestionnaireView(c *gin.Context) {
 		res.FailWithCode(res.ParameterError, c)
 		return
 	}
-	var questionnaireModel models.QuestionnaireModel
-	result := global.Db.First(&questionnaireModel, requestBody.Id)
-	result.Updates(map[string]any{
-		"deleted_at": time.Now(),
-		"status":     enum.Deleted,
-	})
-	//global.Db.Delete(&questionnaireModel, "id = ?", requestBody.Id)
+	service.DelQuestionnaireService(requestBody.Id)
+
 	res.OkWith(c)
 }

@@ -15,6 +15,7 @@ type QuestionModel struct {
 	BaseModel
 	QuestionnaireModel QuestionnaireModel `gorm:"foreignKey:QuestionnaireId" json:"questionnaire_model"`
 	QuestionnaireId    uint               `json:"questionnaire_id"`
+	QuestionNum        uint               `json:"question_num"` // 问题序号，用来排序
 	QuestionText       string             `json:"question_text"`
 	QuestionType       int                `json:"question_type"` // 问题类型（单选、多选、文本）
 	MinOption          int                `json:"min_option"`    // 最少选项数
