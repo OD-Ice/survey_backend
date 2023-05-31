@@ -17,7 +17,6 @@ func (QuestionnaireApi) CreateQuestionnaireView(c *gin.Context) {
 	//		fmt.Println("Recovered:", r)
 	//	}
 	//}()
-
 	var requestBody serialization.QuestionnaireSerialization
 	_currUser, _ := c.Get("currUser")
 	currUser := _currUser.(*models.UserModel)
@@ -53,7 +52,14 @@ func (QuestionnaireApi) GetQuestionnaireView(c *gin.Context) {
 	_currUser, _ := c.Get("currUser")
 	currUser := _currUser.(*models.UserModel)
 	// 查询
-	questionnaireModels := service.GetQuestionnaireByUserIdService(currUser.Id)
+	var requestBody serialization.BaseSerialization
+	err := c.ShouldBindQuery(&requestBody)
+	if err != nil {
+		fmt.Println(err)
+		res.FailWithCode(res.ParameterError, c)
+		return
+	}
+	questionnaireModels := service.GetQuestionnaireByUserIdService(currUser.Id, requestBody.Page, requestBody.Results)
 
 	var data []map[string]any
 	for _, item := range questionnaireModels {
@@ -64,6 +70,8 @@ func (QuestionnaireApi) GetQuestionnaireView(c *gin.Context) {
 				"user_id":     item.UserId,
 				"description": item.Description,
 				"status":      item.Status,
+				"create_at":   item.CreatedAt.Format("2006-01-02 15:04:05"),
+				"update_at":   item.UpdatedAt.Format("2006-01-02 15:04:05"),
 			},
 		)
 	}

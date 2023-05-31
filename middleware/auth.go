@@ -47,3 +47,9 @@ func authenticateUser(token string) (*models.UserModel, error) {
 
 	return &user, nil
 }
+
+func ReqHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*") // 设置允许跨域请求的域名
+	}
+}

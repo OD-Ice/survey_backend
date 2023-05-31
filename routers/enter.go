@@ -3,17 +3,20 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"survey_backend/global"
+	"survey_backend/middleware"
 )
 
 type RouterGroup struct {
-	*gin.Engine
+	*gin.RouterGroup
 }
 
 func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	router := gin.Default()
-	RouterGroup{router}.SettingsRouter()
-	RouterGroup{router}.QuestionnaireRouter()
-	RouterGroup{router}.QuestionRouter()
+	router.Use(middleware.ReqHeaders())
+	baseRouter := router.Group("api")
+	RouterGroup{baseRouter}.SettingsRouter()
+	RouterGroup{baseRouter}.QuestionnaireRouter()
+	RouterGroup{baseRouter}.QuestionRouter()
 	return router
 }

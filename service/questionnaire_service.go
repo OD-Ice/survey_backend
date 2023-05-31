@@ -32,9 +32,9 @@ func UpdateQuestionnaireService(questionnaireId uint, title string, description 
 	})
 }
 
-func GetQuestionnaireByUserIdService(userId uint) []models.QuestionnaireModel {
+func GetQuestionnaireByUserIdService(userId uint, page int, results int) []models.QuestionnaireModel {
 	var questionnaireModels []models.QuestionnaireModel
-	global.Db.Where("user_id = ?", userId).Select("id, title, user_id, description, status").Find(&questionnaireModels)
+	global.Db.Where("user_id = ?", userId).Limit(results).Offset((page - 1) * results).Order("-created_at").Find(&questionnaireModels)
 	return questionnaireModels
 }
 
