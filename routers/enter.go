@@ -18,5 +18,7 @@ func InitRouter() *gin.Engine {
 	RouterGroup{baseRouter}.SettingsRouter()
 	RouterGroup{baseRouter}.QuestionnaireRouter()
 	RouterGroup{baseRouter}.QuestionRouter()
+	RouterGroup{baseRouter}.LoginRouter()
+	RouterGroup{baseRouter}.LogoutRouter()
 	return router
 }

@@ -16,3 +16,12 @@ system:
   host: "0.0.0.0"
   port: 8080
   env: debug
+jwt:
+  secret: ypuUHDIsn78js90#hdHDIua
+  exp: 24
+redis:
+  addr: 127.0.0.1
+  port: 6379
+  password: LPDz2mb7F8dZqyYz
+  db: 0
+  pool_size: 100

@@ -14,6 +14,8 @@ func main() {
 	global.Log = core.InitLogger()
 	// 初始化mysql连接
 	global.Db = core.InitGorm()
+	// 初始化redis
+	global.Redis = core.InitRedis()
 	// 命令行参数绑定
 	option := flag.Parse()
 	if flag.IsWebStop(option) {

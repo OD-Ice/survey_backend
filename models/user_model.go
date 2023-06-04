@@ -5,6 +5,7 @@ type UserModel struct {
 	UserName string `gorm:"size:64" json:"user_name"`
 	Password string `gorm:"size:128" json:"password"`
 	NickName string `gorm:"size:64" json:"nick_name"`
+	Avatar   string `json:"avatar"`
 	Sex      int    `json:"sex"`
 	Phone    string `gorm:"size:11" json:"phone"`
 	Email    string `gorm:"size:64" json:"email"`
