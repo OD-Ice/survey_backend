@@ -12,4 +12,5 @@ func (router RouterGroup) QuestionRouter() {
 	QuestionRouter.Use(middleware.AuthMiddleware())
 	QuestionApi := api.ApiGroupApp.QuestionApi
 	QuestionRouter.POST("/create", QuestionApi.CreateQuestionView)
+	QuestionRouter.GET("/get_list", QuestionApi.GetQuestionListView)
 }

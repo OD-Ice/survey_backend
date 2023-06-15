@@ -30,3 +30,9 @@ func BatchCreateOptionService(questionId uint, optionList []serialization.Option
 	}
 	global.Db.CreateInBatches(dataModels, len(dataModels))
 }
+
+func GetOptionListService(questionIdList []uint) []models.OptionModel {
+	var optionModels []models.OptionModel
+	global.Db.Where("question_id in ?", questionIdList).Order("option_number").Find(&optionModels)
+	return optionModels
+}

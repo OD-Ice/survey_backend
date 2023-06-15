@@ -28,7 +28,7 @@ type OptionModel struct {
 	BaseModel
 	QuestionModel QuestionModel `gorm:"foreignKey:QuestionId" json:"question_model"`
 	QuestionId    uint          `json:"question_id"`
-	OptionNumber  string        `json:"question_number"` // 选项编号(a,b,c,d...)
+	OptionNumber  string        `json:"option_number"` // 选项编号(a,b,c,d...)
 	OptionText    string        `json:"option_text"`
 	Status        int           `json:"status"`
 }

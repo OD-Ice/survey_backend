@@ -32,7 +32,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		if err != nil {
 			// 认证失败，返回未经授权的错误
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			return
+			c.Abort()
 		}
 
 		// 将当前用户的信息保存到上下文中，以便后续处理程序使用

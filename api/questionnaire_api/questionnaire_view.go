@@ -55,7 +55,6 @@ func (QuestionnaireApi) GetQuestionnaireView(c *gin.Context) {
 	var requestBody serialization.BaseSerialization
 	err := c.ShouldBindQuery(&requestBody)
 	if err != nil {
-		fmt.Println(err)
 		res.FailWithCode(res.ParameterError, c)
 		return
 	}

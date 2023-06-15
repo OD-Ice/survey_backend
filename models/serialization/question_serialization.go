@@ -1,7 +1,7 @@
 package serialization
 
 type QuestionSerialization struct {
-	QuestionnaireId uint                  `json:"questionnaire_id"`
+	QuestionnaireId uint                  `json:"questionnaire_id" form:"questionnaire_id"`
 	QuestionNum     uint                  `json:"question_num"`
 	QuestionText    string                `json:"question_text"`
 	QuestionType    int                   `json:"question_type"`

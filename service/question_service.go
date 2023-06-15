@@ -19,3 +19,9 @@ func CreateQuestionService(questionnaireId uint, questionNum uint, questionText 
 	global.Db.Create(&dataModel)
 	return dataModel.Id
 }
+
+func GetQuestionListService(questionnaireId uint) []models.QuestionModel {
+	var questionModels []models.QuestionModel
+	global.Db.Where("questionnaire_id = ?", questionnaireId).Order("question_num").Find(&questionModels)
+	return questionModels
+}
