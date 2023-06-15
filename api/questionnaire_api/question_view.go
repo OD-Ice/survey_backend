@@ -19,10 +19,12 @@ func (QuestionApi) CreateQuestionView(c *gin.Context) {
 		return
 	}
 
+	// 查询已有问题的数量
+	questionCount := service.GetQuestionCountService(requestBody.QuestionnaireId)
 	// 创建问题
 	questionId := service.CreateQuestionService(
 		requestBody.QuestionnaireId,
-		requestBody.QuestionNum,
+		questionCount+1,
 		requestBody.QuestionText,
 		requestBody.QuestionType,
 		requestBody.MinOption,
@@ -35,6 +37,33 @@ func (QuestionApi) CreateQuestionView(c *gin.Context) {
 	}
 
 	data := map[string]any{"questionId": questionId}
+	res.OkWithData(data, c)
+}
+
+// EditQuestionView 编辑问题
+func (QuestionApi) EditQuestionView(c *gin.Context) {
+	var requestBody serialization.QuestionSerialization
+	err := c.ShouldBindJSON(&requestBody)
+	if err != nil {
+		res.FailWithCode(res.ParameterError, c)
+		return
+	}
+
+	// 修改问题
+	service.UpdateQuestionService(
+		requestBody.Id,
+		requestBody.QuestionText,
+		requestBody.QuestionType,
+	)
+
+	// 删除已有选项
+	service.DelOptionServiceByQuestion(requestBody.Id)
+	// 选择题需要创建选项
+	if utils.InList(requestBody.QuestionType, []any{enum.Single, enum.Multiple}) {
+		service.BatchCreateOptionService(requestBody.Id, requestBody.OptionList)
+	}
+
+	data := map[string]any{"questionId": requestBody.Id}
 	res.OkWithData(data, c)
 }
 

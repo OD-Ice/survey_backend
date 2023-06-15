@@ -18,6 +18,11 @@ func CreateOptionService(questionId uint, optionNumber string, optionText string
 	return dataModel.Id
 }
 
+func DelOptionServiceByQuestion(questionId uint) {
+	var dataModel models.OptionModel
+	global.Db.Where("question_id = ?", questionId).Delete(&dataModel)
+}
+
 func BatchCreateOptionService(questionId uint, optionList []serialization.OptionSerialization) {
 	var dataModels []models.OptionModel
 	for _, item := range optionList {
