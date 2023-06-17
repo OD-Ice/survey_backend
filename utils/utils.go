@@ -9,3 +9,8 @@ func InList(key any, list []any) bool {
 	}
 	return false
 }
+
+// IsUintListEmpty 判断uint列表是否是空的
+func IsUintListEmpty(slice []uint) bool {
+	return len(slice) == 0
+}

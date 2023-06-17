@@ -15,4 +15,6 @@ func (router RouterGroup) QuestionnaireRouter() {
 	QuestionnaireRouter.POST("/update", QuestionnaireApi.UpdateQuestionnaireView)
 	QuestionnaireRouter.GET("/get_list", QuestionnaireApi.GetQuestionnaireView)
 	QuestionnaireRouter.POST("/delete", QuestionnaireApi.DeleteQuestionnaireView)
+	QuestionnaireRouter.POST("/edit_status", QuestionnaireApi.EditStatusView)
+	QuestionnaireRouter.POST("/answer", QuestionnaireApi.AnswerView)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"gorm.io/gorm"
 	"net/http"
 	"survey_backend/global"
 	"survey_backend/models"
@@ -28,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 根据令牌进行用户认证，并获取当前用户的信息
-		user, exp, err := authenticateUser(token)
+		user, exp, err := authenticateUser(c, token)
 		if err != nil {
 			// 认证失败，返回未经授权的错误
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
@@ -45,7 +46,8 @@ func AuthMiddleware() gin.HandlerFunc {
 }
 
 // 模拟用户认证的函数，根据令牌获取用户信息
-func authenticateUser(token string) (*models.UserModel, int64, error) {
+func authenticateUser(c *gin.Context, token string) (*models.UserModel, int64, error) {
+	db, _ := c.Get("db")
 	// 在这里进行身份验证和授权的逻辑，根据令牌获取用户信息
 	jwt, err := utils.VerifyJWT(token)
 	if err != nil {
@@ -53,7 +55,7 @@ func authenticateUser(token string) (*models.UserModel, int64, error) {
 	}
 	userId := jwt.JwtPayLoad.UserId
 	// 验证用户是否存在
-	user, ok := service.GetUserById(userId)
+	user, ok := service.GetUserById(db.(*gorm.DB), userId)
 	if !ok {
 		panic("用户不存在")
 	}
@@ -64,5 +66,26 @@ func authenticateUser(token string) (*models.UserModel, int64, error) {
 func ReqHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*") // 设置允许跨域请求的域名
+	}
+}
+
+func ApiMySql() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := global.Db.Begin()
+		defer func() {
+			if r := recover(); r != nil {
+				// 发生 panic，回滚事务
+				db.Rollback()
+				panic(r)
+			} else if c.IsAborted() {
+				// 请求被中断，回滚事务
+				db.Rollback()
+			} else {
+				// 提交事务
+				db.Commit()
+			}
+		}()
+		c.Set("db", db)
+		c.Next()
 	}
 }

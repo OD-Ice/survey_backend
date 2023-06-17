@@ -2,6 +2,7 @@ package login_api
 
 import (
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"survey_backend/global"
 	"survey_backend/models/res"
 	"survey_backend/models/serialization"
@@ -10,6 +11,7 @@ import (
 )
 
 func (LoginApi) Register(c *gin.Context) {
+	db, _ := c.Get("db")
 	var requestBody serialization.RegisterSerialization
 	err := c.ShouldBindJSON(&requestBody)
 	if err != nil {
@@ -20,7 +22,7 @@ func (LoginApi) Register(c *gin.Context) {
 		res.FailWithMsg("两次密码输入不一致！", c)
 		return
 	}
-	userId, err := service.CreateUser(&requestBody)
+	userId, err := service.CreateUser(db.(*gorm.DB), &requestBody)
 	if err != nil {
 		res.FailWithMsg("注册失败", c)
 		return
@@ -30,6 +32,7 @@ func (LoginApi) Register(c *gin.Context) {
 }
 
 func (LoginApi) Login(c *gin.Context) {
+	db, _ := c.Get("db")
 	var requestBody serialization.LoginSerialization
 	err := c.ShouldBindJSON(&requestBody)
 	if err != nil {
@@ -37,7 +40,7 @@ func (LoginApi) Login(c *gin.Context) {
 		return
 	}
 	// 验证用户是否存在
-	user, ok := service.GetUserByParams(requestBody.Username)
+	user, ok := service.GetUserByParams(db.(*gorm.DB), requestBody.Username)
 	if !ok {
 		global.Log.Warn("用户名/手机号/邮箱不存在")
 		res.FailWithCode(res.UserPwdError, c)

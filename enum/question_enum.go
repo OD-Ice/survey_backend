@@ -5,5 +5,9 @@ const (
 	Single     = iota + 1 // 单选
 	Multiple              // 多选
 	Subjective            // 主观题
-	Blanks                // 填空题
+)
+
+// 问卷状态
+const ( // 正常
+	Published = 1 // 发布
 )
