@@ -1,7 +1,7 @@
 package serialization
 
 type QuestionnaireSerialization struct {
-	Id          uint   `json:"id"`
+	Id          uint   `json:"id" form:"id"`
 	Title       string `json:"title"`
 	UserId      uint   `json:"user_id"`
 	Description string `json:"description"`

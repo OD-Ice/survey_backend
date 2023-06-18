@@ -122,7 +122,7 @@ func (QuestionnaireApi) AnswerView(c *gin.Context) {
 		return
 	}
 	// 验证问卷状态
-	questionnaire := service.GetQuestionnaireByIdService(db.(*gorm.DB), requestBody.QuestionnaireId)
+	questionnaire := service.GetPublishedQuestionnaireByIdService(db.(*gorm.DB), requestBody.QuestionnaireId)
 	if questionnaire == nil {
 		res.FailWithMsg("问卷不存在或没有发布", c)
 		return
@@ -159,4 +159,16 @@ func (QuestionnaireApi) AnswerView(c *gin.Context) {
 	}
 	service.BatchCreateAnswerService(db.(*gorm.DB), answerList)
 	res.OkWith(c)
+}
+
+func (QuestionnaireApi) GetQuestionnaireByIdView(c *gin.Context) {
+	db, _ := c.Get("db")
+	var requestBody serialization.QuestionnaireSerialization
+	err := c.ShouldBindQuery(&requestBody)
+	if err != nil {
+		res.FailWithCode(res.ParameterError, c)
+		return
+	}
+	questionnaire := service.GetQuestionnaireByIdService(db.(*gorm.DB), requestBody.Id)
+	res.OkWithData(questionnaire, c)
 }

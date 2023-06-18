@@ -48,9 +48,18 @@ func UpdateQuestionnaireStatusService(db *gorm.DB, questionnaireId uint, status 
 	}
 }
 
-func GetQuestionnaireByIdService(db *gorm.DB, id uint) *models.QuestionnaireModel {
+func GetPublishedQuestionnaireByIdService(db *gorm.DB, id uint) *models.QuestionnaireModel {
 	var questionnaireModel models.QuestionnaireModel
 	err := db.Where("id = ? AND status = ?", id, enum.Published).Take(&questionnaireModel).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil
+	}
+	return &questionnaireModel
+}
+
+func GetQuestionnaireByIdService(db *gorm.DB, id uint) *models.QuestionnaireModel {
+	var questionnaireModel models.QuestionnaireModel
+	err := db.Where("id = ?", id).Take(&questionnaireModel).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil
 	}
