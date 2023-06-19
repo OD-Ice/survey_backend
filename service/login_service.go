@@ -19,6 +19,7 @@ func CreateUser(db *gorm.DB, user *serialization.RegisterSerialization) (uint, e
 		UserName: user.UserName,
 		Password: password,
 		NickName: user.NickName,
+		Avatar:   "https://img1.baidu.com/it/u=1592760890,4076657703&fm=253&fmt=auto&app=138&f=JPEG",
 		Sex:      sex,
 		Phone:    user.Phone,
 		Email:    user.Email,

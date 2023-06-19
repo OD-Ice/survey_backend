@@ -22,6 +22,15 @@ func (LoginApi) Register(c *gin.Context) {
 		res.FailWithMsg("两次密码输入不一致！", c)
 		return
 	}
+
+	// 验证用户是否重复
+	_, ok := service.GetUserByParams(db.(*gorm.DB), requestBody.Phone)
+	if ok {
+		global.Log.Warn("用户已存在，请直接登录！")
+		res.FailWithMsg("用户已存在，请直接登录！", c)
+		return
+	}
+
 	userId, err := service.CreateUser(db.(*gorm.DB), &requestBody)
 	if err != nil {
 		res.FailWithMsg("注册失败", c)
