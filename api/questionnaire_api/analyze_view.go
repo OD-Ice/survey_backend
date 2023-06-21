@@ -41,6 +41,20 @@ func (QuestionnaireApi) GetAnalyzeDataView(c *gin.Context) {
 	res.OkWithData(result, c)
 }
 
+// GetRoughlyAnswerCountView 获取答卷数量
+func (QuestionnaireApi) GetRoughlyAnswerCountView(c *gin.Context) {
+	db, _ := c.Get("db")
+	var requestBody serialization.QuestionnaireSerialization
+	err := c.ShouldBindQuery(&requestBody)
+	if err != nil {
+		res.FailWithCode(res.ParameterError, c)
+		return
+	}
+	questionnaireId := requestBody.Id
+	roughlyAnswerCount := service.GetRoughlyAnswerCountService(db.(*gorm.DB), questionnaireId)
+	res.OkWithData(map[string]int{"count": roughlyAnswerCount}, c)
+}
+
 // GetSubjectiveAnalyzeDataView 查询简答题所有答题数据
 func (QuestionnaireApi) GetSubjectiveAnalyzeDataView(c *gin.Context) {
 	db, _ := c.Get("db")
