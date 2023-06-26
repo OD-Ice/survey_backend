@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y supervisor
 # 安装git
 RUN apt-get update && apt-get install -y git
 
+# 安装vim
+RUN apt-get install vim
+
 # 复制 supervisor 配置文件到容器中
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
